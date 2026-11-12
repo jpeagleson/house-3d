@@ -21,12 +21,20 @@
   #bar button:hover{background:#eef3f7}
   #bar button.on{background:#27455f;color:#fff;border-color:#27455f}
   #bar label{font-size:12px;display:flex;align-items:center;gap:6px;color:#333}
+  #hud h1{padding-right:26px}
+  #hudHide{position:absolute;top:6px;right:8px;width:26px;height:26px;border:0;background:none;font-size:20px;line-height:1;color:#56606a;cursor:pointer;border-radius:6px}
+  #hudHide:hover{background:#e6ebef;color:#1c2126}
+  #hudShow{position:absolute;top:12px;left:12px;border:0;background:rgba(255,255,255,.9);border-radius:8px;padding:7px 11px;font-size:13px;color:#1c2126;cursor:pointer;box-shadow:0 2px 12px rgba(0,0,0,.25)}
+  #hudShow:hover{background:#fff}
+  #hudShow[hidden]{display:none}
   #help{position:absolute;top:12px;right:12px;background:rgba(255,255,255,.85);border-radius:8px;padding:6px 10px;font-size:12px;color:#444}
   #err{position:absolute;inset:0;display:none;align-items:center;justify-content:center;font-size:16px;padding:30px;text-align:center}
 </style>
 </head>
 <body>
+<button id="hudShow" type="button" aria-label="Show details" hidden>ⓘ Details</button>
 <div id="hud">
+  <button id="hudHide" type="button" aria-label="Hide details" title="Hide">×</button>
   <h1>Our house in 3D</h1>
   <div class="sub">Reconstructed from LiDAR, aerials &amp; listing photos</div>
   <table>
@@ -1611,7 +1619,11 @@ if(q.get('cut')==='0'){ cutaway=false; bC.classList.remove('on'); }
 if(q.get('trees')==='0') setTrees(false); if(q.get('leaves')==='0') setLeaves(false);
 const sunEl=document.getElementById('sun'); sunEl.addEventListener('input',()=>setSun(parseFloat(sunEl.value)));
 if(q.get('sun')){ sunEl.value=q.get('sun'); setSun(parseFloat(q.get('sun'))); }
-if(q.get('ui')==='0'){ for(const id of ['hud','bar','help']) document.getElementById(id).style.display='none'; }
+const hudEl=document.getElementById('hud'), hudShow=document.getElementById('hudShow');
+function setHud(on){ hudEl.style.display=on?'':'none'; hudShow.hidden=on; }
+document.getElementById('hudHide').addEventListener('click',()=>setHud(false)); hudShow.addEventListener('click',()=>setHud(true));
+if(q.get('info')==='0') setHud(false);
+if(q.get('ui')==='0'){ hudShow.hidden=true; for(const id of ['hud','bar','help']) document.getElementById(id).style.display='none'; }
 addEventListener('resize',()=>{ camera.aspect=innerWidth/innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth,innerHeight); });
 (function loop(){ requestAnimationFrame(loop); controls.update(); updateCutaway(); renderer.render(scene,camera); })();
 })();
